@@ -37,6 +37,11 @@ public:
 	float SpawnRadius = 100.0f;
 
 
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FCollisionResponseContainer testContainer;
+
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int SpawnCount = 1;
 
