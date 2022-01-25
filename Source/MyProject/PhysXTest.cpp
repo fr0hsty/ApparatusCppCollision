@@ -158,7 +158,8 @@ void APhysXTest::CreateNewPhysActor(bool EnableGravity, FVector position, float 
 		
 
 		// Apply the filter data.
-		FPhysicsInterface::SetQueryFilter(SphereShapeHandle, QueryData);
+		//FPhysicsInterface::SetQueryFilter(SphereShapeHandle, QueryData);
+		FPhysicsInterface::SetQueryFilter(SphereShapeHandle, SimData);
 		FPhysicsInterface::SetSimulationFilter(SphereShapeHandle, SimData);
 
 		DebugPrint("Sim Word0: " + FString::FromInt(SimData.Word0), 10.0f, FColor::Red);
