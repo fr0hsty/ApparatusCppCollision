@@ -1,5 +1,8 @@
+# WIP - STILL WORKING ON THIS 
+
+
 # ApparatusCppCollision
-An attempt to bypass UE4's components and talk directly to PhysX..
+An attempt to bypass UE4's components and talk directly to PhysX.
 
 There are many hacks that are possible inorder to enjoin ECS and Physics, and a lot of them will work without issue.
 
