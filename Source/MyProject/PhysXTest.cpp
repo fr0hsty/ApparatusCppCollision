@@ -101,8 +101,8 @@ void APhysXTest::CreateNewPhysActor(bool EnableGravity, FVector position, float 
 		// ... end up sharing a name with this collider. It might be worth it to FMath::Rand just to be sure its random.
 		// int32 actorID = -1;
 		int32 actorID = FMath::Rand();
-		uint32 ComponentID = 50;
-		uint16 BodyIndex = 50; // I beleive these are ok to be "zero" beacuse only one shape is being added.
+		uint32 ComponentID = 0;
+		uint16 BodyIndex = 0; // I beleive these are ok to be "zero" beacuse only one shape is being added. // These correspond to hit indexes/SK indexes depending on how its implimented ...
 
 		// Create the final filter data contailers
 		FCollisionFilterData QueryData={}; // I think the key thing with Querydata
@@ -117,7 +117,7 @@ void APhysXTest::CreateNewPhysActor(bool EnableGravity, FVector position, float 
 
 		// I dont think this fills out query data correctly.
 		CreateShapeFilterData(ECollisionChannel::ECC_WorldDynamic, ExtraFilterData, actorID, testContainer, ComponentID,
-		                      BodyIndex, QueryData, SimData, true, true, true, true);
+		                      BodyIndex, QueryData, SimData, false, false, false, false);
 		
 		/*CreateShapeFilterData(ECollisionChannel::ECC_WorldDynamic, ExtraFilterData, actorID, newContainer, ComponentID,
 									  BodyIndex, QueryData, SimData, true, true, true, true);
@@ -206,6 +206,16 @@ void APhysXTest::Tick(float DeltaSeconds)
 		
 		FCollisionResponseParams ResponseParams;
 		FCollisionObjectQueryParams ObjectQueryparams;
+		ObjectQueryparams.AddObjectTypesToQuery(ECollisionChannel::ECC_Visibility);
+		ObjectQueryparams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+		ObjectQueryparams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+		ObjectQueryparams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+		ObjectQueryparams.AddObjectTypesToQuery(ECollisionChannel::ECC_Camera);
+		//ObjectQueryparams.AddObjectTypesToQuery(ECollisionChannel::ECC_Visibility);
+		//ObjectQueryparams.AddObjectTypesToQuery(ECollisionChannel::ECC_Visibility);
+		
+		
+		//ObjectQueryparams.
 		
 		
 		// Perform the trace
