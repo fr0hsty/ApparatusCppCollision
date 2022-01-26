@@ -9,6 +9,8 @@
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Physics/PhysicsInterfaceCore.h"
 #include "Physics/PhysicsInterfaceUtils.h"
+//#include "Physics/PhysicsInterfaceUtils.cpp"
+
 #include "Physics/Experimental/ChaosInterfaceWrapper.h"
 
 void APhysXTest::BeginPlay()
@@ -114,27 +116,30 @@ void APhysXTest::CreateNewPhysActor(bool EnableGravity, FVector position, float 
 
 		// Collision acting funky, trying to experiment to sortt this out
 		FCollisionFilterData QueryData={}; // I think the key thing with Querydata
-		DebugPrint("Query Word0: " + FString::FromInt(QueryData.Word0), 10.0f, FColor::Red);
+
+		/*DebugPrint("Query Word0: " + FString::FromInt(QueryData.Word0), 10.0f, FColor::Red);
 		DebugPrint("Query Word1: " + FString::FromInt(QueryData.Word1), 10.0f, FColor::Red);
 		DebugPrint("Query Word2: " + FString::FromInt(QueryData.Word2), 10.0f, FColor::Red);
-		DebugPrint("Query Word3: " + FString::FromInt(QueryData.Word3), 10.0f, FColor::Red);
+		DebugPrint("Query Word3: " + FString::FromInt(QueryData.Word3), 10.0f, FColor::Red);*/
 
 
 			
 		// AS OF CURRENT - THE QUERY DATA IS NOT CORRECT AND CANNOT BE TRACED AGAINST - WORKING TO FIX THAT
 
 		// I dont think this fills out query data correctly.
-		CreateShapeFilterData(ECollisionChannel::ECC_WorldDynamic, ExtraFilterData, actorID, testContainer, ComponentID,
+		CreateShapeFilterData(ECollisionChannel::ECC_WorldDynamic, ExtraFilterData, actorID, newContainer, ComponentID,
 		                      BodyIndex, QueryData, SimData, false, true, false, false);
 
-		DebugPrint("Query Word0: " + FString::FromInt(QueryData.Word0), 10.0f, FColor::Red);
+		/*DebugPrint("Query Word0: " + FString::FromInt(QueryData.Word0), 10.0f, FColor::Red);
 		DebugPrint("Query Word1: " + FString::FromInt(QueryData.Word1), 10.0f, FColor::Red);
 		DebugPrint("Query Word2: " + FString::FromInt(QueryData.Word2), 10.0f, FColor::Red);
-		DebugPrint("Query Word3: " + FString::FromInt(QueryData.Word3), 10.0f, FColor::Red);
+		DebugPrint("Query Word3: " + FString::FromInt(QueryData.Word3), 10.0f, FColor::Red);*/
 
 
 		// This is doing the above thing manually in a second pass just for the QueryData
-		FPhysicsFilterBuilder Builder(ECC_WorldDynamic, ExtraFilterData, testContainer);
+		FPhysicsFilterBuilder Builder(ECC_WorldDynamic, ExtraFilterData, newContainer);
+		Builder.ConditionalSetFlags(EPDF_ComplexCollision, false);
+		// Builder.ConditionalSetFlags(EPDF_KinematicKinematicPairs, false);
 		Builder.ConditionalSetFlags(EPDF_CCD, true);
 		Builder.ConditionalSetFlags(EPDF_ContactNotify, true);
 		Builder.ConditionalSetFlags(EPDF_StaticShape, false);
@@ -143,10 +148,10 @@ void APhysXTest::CreateNewPhysActor(bool EnableGravity, FVector position, float 
 		Builder.GetQueryData(actorID, QueryData.Word0, QueryData.Word1, QueryData.Word2, QueryData.Word3);
 
 
-		DebugPrint("Query Word0: " + FString::FromInt(QueryData.Word0), 10.0f, FColor::Red);
+		/*DebugPrint("Query Word0: " + FString::FromInt(QueryData.Word0), 10.0f, FColor::Red);
 		DebugPrint("Query Word1: " + FString::FromInt(QueryData.Word1), 10.0f, FColor::Red);
 		DebugPrint("Query Word2: " + FString::FromInt(QueryData.Word2), 10.0f, FColor::Red);
-		DebugPrint("Query Word3: " + FString::FromInt(QueryData.Word3), 10.0f, FColor::Red);
+		DebugPrint("Query Word3: " + FString::FromInt(QueryData.Word3), 10.0f, FColor::Red);*/
 		
 		
 		/*
@@ -159,18 +164,21 @@ void APhysXTest::CreateNewPhysActor(bool EnableGravity, FVector position, float 
 							  BodyIndex, QueryData, SimData, true, true, false, false);*/
 
 		// PhysicsInterfaceUtils.h contains CreateQueryFilterData() <- could be useful aswell.
-		FCollisionQueryParams objectparams;
+		FCollisionQueryParams collisionQueryParams;
 		
-		FCollisionObjectQueryParams objectqueryparams; // if these are valid down below, the function changes.
+		FCollisionObjectQueryParams objectqueryparams = {}; // if these are valid down below, the function changes.
+		objectqueryparams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+		objectqueryparams.AddObjectTypesToQuery(ECollisionChannel::ECC_Visibility);
+		objectqueryparams.AddObjectTypesToQuery(ECollisionChannel::ECC_Camera);
+		//objectqueryparams.DefaultObjectQueryParam();
+		
 		if (objectqueryparams.IsValid())
 		{
-			DebugPrint("ITS VALID!!!", 10.0f, FColor::Red);
+			DebugPrint("Object query is valid!!!", 10.0f, FColor::Red);
 		}
 		else
 		{
-			DebugPrint("IT IS NOT VALID AT ALL!!!", 10.0f, FColor::Red);
-
-			
+			DebugPrint("Object query params are not valid!!!", 10.0f, FColor::Red);
 		}
 
 		
@@ -187,6 +195,28 @@ void APhysXTest::CreateNewPhysActor(bool EnableGravity, FVector position, float 
 		// Apply the filter data.
 		//FPhysicsInterface::SetQueryFilter(SphereShapeHandle, QueryData);
 
+		FPhysicsInterface::SetIsQueryShape(SphereShapeHandle, true);
+		FCollisionFilterData filterData ={};
+
+		
+		//CreateQueryFilterData();
+		
+		//filterData = CreateQueryFilterData(ECollisionChannel::ECC_WorldDynamic, false, newContainer, collisionQueryParams, objectqueryparams, false);
+		//
+
+		//filterData = EthanCreateObjectQueryFilterData(ECollisionChannel::ECC_WorldDynamic, false, newContainer, collisionQueryParams, objectqueryparams, false);
+		filterData = EthanCreateObjectQueryFilterData(false, false, objectqueryparams);
+		
+		//EthanCreateObjectQueryFilterData
+		//CreateQueryFilterData(ECollisionChannel::ECC_WorldDynamic, false, newContainer, collisionQueryParams, objectqueryparams, false);
+
+		
+		if (SphereShapeHandle.IsValid())
+		{
+			DebugPrint("Shape is valid, setting query filter!!!", 10.0f, FColor::Red);
+			FPhysicsInterface::SetQueryFilter(SphereShapeHandle, filterData);
+		}
+
 		if(SphereShapeHandle.IsValid())
 		{
 			DebugPrint("THE SHAPE IS VALID!!!", 10.0f, FColor::Red);
@@ -196,29 +226,33 @@ void APhysXTest::CreateNewPhysActor(bool EnableGravity, FVector position, float 
 			DebugPrint("THE SHAPE IS NOOOOOT VALID!!!", 10.0f, FColor::Red);
 		}
 
-
-		//QueryData.Word2 = FMath::Abs(QueryData.Word2);// -abs(QueryData.Word2);
-		//QueryData.Word2 = -abs(QueryData.Word2);
-		// QueryData.Word2 = -65281;
+		// I think between here and the tick function - somehow - the query filter isn't being set properly
 		
+		DebugPrint("Name: " + FString(SphereActorHandle.SyncActor->getName()), 20.0f, FColor::Yellow);
+		DebugPrint("Query before being applied: ", 20.0f, FColor::Yellow);
+		DebugPrint("Query Word0: " + FString::FromInt(QueryData.Word0), 20.0f, FColor::Yellow);
+		DebugPrint("Query Word1: " + FString::FromInt(QueryData.Word1), 20.0f, FColor::Yellow);
+		DebugPrint("Query Word2: " + FString::FromInt(QueryData.Word2), 20.0f, FColor::Yellow);
+		DebugPrint("Query Word3: " + FString::FromInt(QueryData.Word3), 20.0f, FColor::Yellow);
 		
-		
-		DebugPrint("Query Word0: " + FString::FromInt(QueryData.Word0), 10.0f, FColor::Red);
-		DebugPrint("Query Word1: " + FString::FromInt(QueryData.Word1), 10.0f, FColor::Red);
-		DebugPrint("Query Word2: " + FString::FromInt(QueryData.Word2), 10.0f, FColor::Red);
-		DebugPrint("Query Word3: " + FString::FromInt(QueryData.Word3), 10.0f, FColor::Red);
-
-
-		DebugPrint("Sim Word0: " + FString::FromInt(SimData.Word0), 10.0f, FColor::Red);
-		DebugPrint("Sim Word1: " + FString::FromInt(SimData.Word1), 10.0f, FColor::Red);
-		DebugPrint("Sim Word2: " + FString::FromInt(SimData.Word2), 10.0f, FColor::Red);
-		DebugPrint("Sim Word3: " + FString::FromInt(SimData.Word3), 10.0f, FColor::Red);
-		
-
-		
-		
-		FPhysicsInterface::SetQueryFilter(SphereShapeHandle, QueryData);
+		//FPhysicsInterface::SetQueryFilter(SphereShapeHandle, QueryData);
 		FPhysicsInterface::SetSimulationFilter(SphereShapeHandle, SimData);
+
+		PxFilterData postApplyFilterData = SphereShapeHandle.Shape->getQueryFilterData();
+
+		DebugPrint("Query AFTER being applied: ", 20.0f, FColor::Yellow);
+		DebugPrint("Query Word0: " + FString::FromInt(postApplyFilterData.word0), 20.0f, FColor::Yellow);
+		DebugPrint("Query Word1: " + FString::FromInt(postApplyFilterData.word1), 20.0f, FColor::Yellow);
+		DebugPrint("Query Word2: " + FString::FromInt(postApplyFilterData.word2), 20.0f, FColor::Yellow);
+		DebugPrint("Query Word3: " + FString::FromInt(postApplyFilterData.word3), 20.0f, FColor::Yellow);
+
+		FCollisionFilterData getData = FPhysicsInterface::GetQueryFilter(SphereShapeHandle);
+		
+		DebugPrint("End applied: ", 20.0f, FColor::Yellow);
+		DebugPrint("Last Word0: " + FString::FromInt(getData.Word0), 20.0f, FColor::Yellow);
+		DebugPrint("Last Word1: " + FString::FromInt(getData.Word1), 20.0f, FColor::Yellow);
+		DebugPrint("Last Word2: " + FString::FromInt(getData.Word2), 20.0f, FColor::Yellow);
+		DebugPrint("Last Word3: " + FString::FromInt(getData.Word3), 20.0f, FColor::Yellow);
 
 	});
 }
@@ -248,6 +282,8 @@ void APhysXTest::Tick(float DeltaSeconds)
 
 	// Quickly perform a trace check to see if we can query against our colliders
 	{
+		// FGenericPhysicsInterface::RaycastTest()
+		
 		// Out hit 
 		FHitResult outHit;
 
@@ -260,10 +296,12 @@ void APhysXTest::Tick(float DeltaSeconds)
 		QueryParams.IgnoreMask = {};
 		QueryParams.bIgnoreBlocks = false;
 		QueryParams.bIgnoreTouches = false;
-
+		
+		
 		// Block everything?
 		FCollisionResponseParams ResponseParams;
 		ResponseParams.CollisionResponse.SetAllChannels(ECR_Block);
+		
 		
 		FCollisionObjectQueryParams ObjectQueryparams;
 		ObjectQueryparams.AddObjectTypesToQuery(ECollisionChannel::ECC_Visibility);
@@ -292,6 +330,7 @@ void APhysXTest::Tick(float DeltaSeconds)
 		// Successfully hit something
 		if (hit)
 		{
+			//outHit.GetActor()
 			DebugPrint("WE HIT SOMETHIGN!!!!!!", 10.0f, FColor::Red);
 		}
 		
@@ -339,6 +378,8 @@ void APhysXTest::Tick(float DeltaSeconds)
 			// This Might fail? I'm only asking for eRIGID_DYNAMICs from physX, but who knows if thats going to do what it says on the tin
 			PxRigidDynamic* CastedRigid = (PxRigidDynamic*)MyArray[i];
 
+			
+
 			// Grab the transform of the actor - It might actually be smarter to draw the SHAPES not the actor.
 			FTransform newTransform = P2UTransform(CastedRigid->getGlobalPose());
 
@@ -358,9 +399,88 @@ void APhysXTest::Tick(float DeltaSeconds)
 			PxShape* ShapesArray[MaxBufferSize] = {};
 			CastedRigid->getShapes(ShapesArray, FinalShapesBufferSize,0);
 
+			
+			// DebugPrint("Shapes Array Query Word0: " + CastedRigid->getName(), 10.0f, FColor::Red);
+			//const char* name = CastedRigid->getName();
+			FString myString (CastedRigid->getName());
+
+			
+			DebugPrint("Shapes array actor Name: " + myString, DeltaSeconds, FColor::Red);
 			for(int j = 0; j < FinalShapesBufferSize; j++)
 			{
+				if (ShapesArray[j] != nullptr)
+				{
+					PxFilterData filterData = ShapesArray[j]->getQueryFilterData();
+					// filterData.word0
+					DebugPrint("Shapes Array Query Word0: " + FString::FromInt(filterData.word0), DeltaSeconds, FColor::Red);
+					DebugPrint("Shapes Array Query Word1: " + FString::FromInt(filterData.word1), DeltaSeconds, FColor::Red);
+					DebugPrint("Shapes Array Query Word2: " + FString::FromInt(filterData.word2), DeltaSeconds, FColor::Red);
+					DebugPrint("Shapes Array Query Word3: " + FString::FromInt(filterData.word3), DeltaSeconds, FColor::Red);
+					DebugPrint("Shape is not null", DeltaSeconds, FColor::Green);
+
+					if (myString == "CPPSpawnedPhysActor")
+					{
+						DebugPrint("Strings are equal", DeltaSeconds, FColor::Green);
+
+						/*
+						filterData.word0 = 1;
+						filterData.word1 = -65281;
+						filterData.word2 = 65280;
+						filterData.word3 = 2097196;*/
+
+						filterData.word0 = 99;
+						filterData.word1 = 99;
+						filterData.word2 = 99;
+						filterData.word3 = 223236;
+						
+						// ShapesArray[j]->setQueryFilterData(filterData);
+					}
+					
+				}
+				else
+				{
+					DebugPrint("SHAPE is null", 0.5f, FColor::Green);
+				}
 			}
 		}
 	}
 }
+
+// Copy pasted this out of engines PhysicsInterfaceUtils.h - code base wouldn't compile without it
+// Original name is CreateObjectQueryFilterData
+// HACK - This should probably be put somewhere better then this OR someone shoudl figure out how to get CreateObjectQueryFilterData to compile
+FCollisionFilterData APhysXTest::EthanCreateObjectQueryFilterData(const bool bTraceComplex, const int32 MultiTrace/*=1 if multi. 0 otherwise*/, const struct FCollisionObjectQueryParams & ObjectParam)
+{
+	/**
+	* Format for QueryData :
+	*		word0 (meta data - ECollisionQuery. Extendable)
+	*
+	*		For object queries
+	*
+	*		word1 (object type queries)
+	*		word2 (unused)
+	*		word3 (Multi (1) or single (0) (top 8) + Flags (lower 24))
+	*/
+
+	FCollisionFilterData NewData;
+
+	NewData.Word0 = (uint32)ECollisionQuery::ObjectQuery;
+
+	if (bTraceComplex)
+	{
+		NewData.Word3 |= EPDF_ComplexCollision;
+	}
+	else
+	{
+		NewData.Word3 |= EPDF_SimpleCollision;
+	}
+
+	// get object param bits
+	NewData.Word1 = ObjectParam.GetQueryBitfield();
+
+	// if 'nothing', then set no bits
+	NewData.Word3 |= CreateChannelAndFilter((ECollisionChannel)MultiTrace, ObjectParam.IgnoreMask);
+
+	return NewData;
+}
+

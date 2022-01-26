@@ -8,8 +8,9 @@ public class MyProject : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "PhysicsCore", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "PhysicsCore","PhysXCooking", "CoreUObject", "Engine", "InputCore" });
 		// Had to add PhysicsCore for using UPhysicsMaterial
+		// PhysXCooking Might also need this?
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

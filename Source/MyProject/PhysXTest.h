@@ -16,6 +16,8 @@ class MYPROJECT_API APhysXTest : public AMechanicalActor
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
+	FCollisionFilterData EthanCreateObjectQueryFilterData(bool bTraceComplex, int32 MultiTrace,
+	                                                      const FCollisionObjectQueryParams& ObjectParam);
 	void CreateNewPhysActor(bool EnableGravity, FVector position, float Radius = 10.0f);
 	
 
