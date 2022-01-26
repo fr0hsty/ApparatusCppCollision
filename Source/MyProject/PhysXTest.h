@@ -38,6 +38,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float SpawnRadius = 100.0f;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool shouldRayTrace = true;
+
+	//shouldRayTrace
+
 
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -45,10 +50,10 @@ public:
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int SpawnCount = 1;
+	int KeypressSpawnCount = 1;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int StartingSpawnCount = 1;
+	int StartingSpawnCount = 5000;
 
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

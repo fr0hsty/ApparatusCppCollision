@@ -9,7 +9,10 @@
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Physics/PhysicsInterfaceCore.h"
 #include "Physics/PhysicsInterfaceUtils.h"
+#include "Utils.h"
+//#include "test.cpp"
 //#include "Physics/PhysicsInterfaceUtils.cpp"
+// #include "test.cpp"
 
 #include "Physics/Experimental/ChaosInterfaceWrapper.h"
 
@@ -174,11 +177,11 @@ void APhysXTest::CreateNewPhysActor(bool EnableGravity, FVector position, float 
 		
 		if (objectqueryparams.IsValid())
 		{
-			DebugPrint("Object query is valid!!!", 10.0f, FColor::Red);
+			DebugPrint("Object query is valid!!!", 1.0f, FColor::Red);
 		}
 		else
 		{
-			DebugPrint("Object query params are not valid!!!", 10.0f, FColor::Red);
+			DebugPrint("Object query params are not valid!!!", 1.0f, FColor::Red);
 		}
 
 		
@@ -207,52 +210,55 @@ void APhysXTest::CreateNewPhysActor(bool EnableGravity, FVector position, float 
 		//filterData = EthanCreateObjectQueryFilterData(ECollisionChannel::ECC_WorldDynamic, false, newContainer, collisionQueryParams, objectqueryparams, false);
 		filterData = EthanCreateObjectQueryFilterData(false, false, objectqueryparams);
 		
+		filterData = EthanCreateObjectQueryFilterData9(false, false, objectqueryparams);
+		// myNamespace::EthanCreateObjectQueryFilterData9(false, false, objectqueryparams);
+		
 		//EthanCreateObjectQueryFilterData
 		//CreateQueryFilterData(ECollisionChannel::ECC_WorldDynamic, false, newContainer, collisionQueryParams, objectqueryparams, false);
 
 		
 		if (SphereShapeHandle.IsValid())
 		{
-			DebugPrint("Shape is valid, setting query filter!!!", 10.0f, FColor::Red);
+			DebugPrint("Shape is valid, setting query filter!!!", 1.0f, FColor::Red);
 			FPhysicsInterface::SetQueryFilter(SphereShapeHandle, filterData);
 		}
 
 		if(SphereShapeHandle.IsValid())
 		{
-			DebugPrint("THE SHAPE IS VALID!!!", 10.0f, FColor::Red);
+			DebugPrint("THE SHAPE IS VALID!!!", 1.0f, FColor::Red);
 		}
 		else
 		{
-			DebugPrint("THE SHAPE IS NOOOOOT VALID!!!", 10.0f, FColor::Red);
+			DebugPrint("THE SHAPE IS NOOOOOT VALID!!!", 1.0f, FColor::Red);
 		}
 
 		// I think between here and the tick function - somehow - the query filter isn't being set properly
 		
-		DebugPrint("Name: " + FString(SphereActorHandle.SyncActor->getName()), 20.0f, FColor::Yellow);
-		DebugPrint("Query before being applied: ", 20.0f, FColor::Yellow);
-		DebugPrint("Query Word0: " + FString::FromInt(QueryData.Word0), 20.0f, FColor::Yellow);
-		DebugPrint("Query Word1: " + FString::FromInt(QueryData.Word1), 20.0f, FColor::Yellow);
-		DebugPrint("Query Word2: " + FString::FromInt(QueryData.Word2), 20.0f, FColor::Yellow);
-		DebugPrint("Query Word3: " + FString::FromInt(QueryData.Word3), 20.0f, FColor::Yellow);
+		DebugPrint("Name: " + FString(SphereActorHandle.SyncActor->getName()), 1.0f, FColor::Yellow);
+		DebugPrint("Query before being applied: ", 1.0f, FColor::Yellow);
+		DebugPrint("Query Word0: " + FString::FromInt(QueryData.Word0), 1.0f, FColor::Yellow);
+		DebugPrint("Query Word1: " + FString::FromInt(QueryData.Word1), 1.0f, FColor::Yellow);
+		DebugPrint("Query Word2: " + FString::FromInt(QueryData.Word2), 1.0f, FColor::Yellow);
+		DebugPrint("Query Word3: " + FString::FromInt(QueryData.Word3), 1.0f, FColor::Yellow);
 		
 		//FPhysicsInterface::SetQueryFilter(SphereShapeHandle, QueryData);
 		FPhysicsInterface::SetSimulationFilter(SphereShapeHandle, SimData);
 
 		PxFilterData postApplyFilterData = SphereShapeHandle.Shape->getQueryFilterData();
 
-		DebugPrint("Query AFTER being applied: ", 20.0f, FColor::Yellow);
-		DebugPrint("Query Word0: " + FString::FromInt(postApplyFilterData.word0), 20.0f, FColor::Yellow);
-		DebugPrint("Query Word1: " + FString::FromInt(postApplyFilterData.word1), 20.0f, FColor::Yellow);
-		DebugPrint("Query Word2: " + FString::FromInt(postApplyFilterData.word2), 20.0f, FColor::Yellow);
-		DebugPrint("Query Word3: " + FString::FromInt(postApplyFilterData.word3), 20.0f, FColor::Yellow);
+		DebugPrint("Query AFTER being applied: ", 1.0f, FColor::Yellow);
+		DebugPrint("Query Word0: " + FString::FromInt(postApplyFilterData.word0), 1.0f, FColor::Yellow);
+		DebugPrint("Query Word1: " + FString::FromInt(postApplyFilterData.word1), 1.0f, FColor::Yellow);
+		DebugPrint("Query Word2: " + FString::FromInt(postApplyFilterData.word2), 1.0f, FColor::Yellow);
+		DebugPrint("Query Word3: " + FString::FromInt(postApplyFilterData.word3), 1.0f, FColor::Yellow);
 
 		FCollisionFilterData getData = FPhysicsInterface::GetQueryFilter(SphereShapeHandle);
 		
-		DebugPrint("End applied: ", 20.0f, FColor::Yellow);
-		DebugPrint("Last Word0: " + FString::FromInt(getData.Word0), 20.0f, FColor::Yellow);
-		DebugPrint("Last Word1: " + FString::FromInt(getData.Word1), 20.0f, FColor::Yellow);
-		DebugPrint("Last Word2: " + FString::FromInt(getData.Word2), 20.0f, FColor::Yellow);
-		DebugPrint("Last Word3: " + FString::FromInt(getData.Word3), 20.0f, FColor::Yellow);
+		DebugPrint("End applied: ", 1.0f, FColor::Yellow);
+		DebugPrint("Last Word0: " + FString::FromInt(getData.Word0), 1.0f, FColor::Yellow);
+		DebugPrint("Last Word1: " + FString::FromInt(getData.Word1), 1.0f, FColor::Yellow);
+		DebugPrint("Last Word2: " + FString::FromInt(getData.Word2), 1.0f, FColor::Yellow);
+		DebugPrint("Last Word3: " + FString::FromInt(getData.Word3), 1.0f, FColor::Yellow);
 
 	});
 }
@@ -266,7 +272,7 @@ void APhysXTest::SpawnStationary()
 void APhysXTest::SpawnGravityAffected()
 {
 	DebugPrint("Spawning gravity affected", 1.0f, FColor::Red);
-	for(int i =0; i < SpawnCount; i++)
+	for(int i =0; i < KeypressSpawnCount; i++)
 	{
 		FVector SpawnLoc = SpawnOffset + FVector(FMath::RandRange(-SpawnWidth, SpawnWidth),
 		                                         FMath::RandRange(-SpawnWidth, SpawnWidth),
@@ -280,6 +286,7 @@ void APhysXTest::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if(shouldRayTrace)
 	// Quickly perform a trace check to see if we can query against our colliders
 	{
 		// FGenericPhysicsInterface::RaycastTest()
@@ -387,7 +394,7 @@ void APhysXTest::Tick(float DeltaSeconds)
 			DrawDebugSphere(GetWorld(), newTransform.GetLocation(), SpawnRadius, SphereDrawSegments, FColor::Green);
 
 			// Declare max buffer size
-			const int MaxShapesBufferCount = 10;
+			const int MaxShapesBufferCount = StartingSpawnCount;
 
 			// Declare min buffer size
 			int minShapesNum = CastedRigid->getNbShapes();
