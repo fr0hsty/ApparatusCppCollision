@@ -1,4 +1,6 @@
-# WIP - STILL WORKING ON THIS 
+# WIP - WORK HALTED FOR A BIT
+The core issue I'm trying to solve atm is how to get a PxActor from a given FHitResult.
+Currently one may spawn a PxActor directly, have that simulate, roll around, collide etc - and its possible to call LineTraces against them with ue4s basic line trace code - but getting the PxActor out of FHitResult is the missing step.
 
 
 # ApparatusCppCollision
